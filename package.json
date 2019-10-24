@@ -4,7 +4,7 @@
   "description": "앞으로 더 재미난 프로젝트를 원활히하고싶어 나는 지금 공부한다!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
