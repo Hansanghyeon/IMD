@@ -1,42 +1,52 @@
+/**
+ * TODO: 20191024
+ * 문자열의 길이에따라 배열의 순서를 조작하지 않고
+ * 문자열의 길이가 제일긴 순서대로 2번째까지
+ * 배열순서대로 가져온다.
+ * 이렇게 다시 알고리즘 제작
+ */
+
+
 function longestConsec(strarr, k) {
-  // 중복제거
-  let resultSet = new Set;
-  for(let i in strarr) {
-    resultSet.add(strarr[i]);
-  }
-  console.log(resultSet);
-  let starrValues = resultSet.keys();
 
-  let resultMap = new Map;
-  for(let i of starrValues) {
-    if(resultMap.has(i.length)) resultMap.set(Number(i.length + 1), resultMap.get(i.length));
-      resultMap.set(Number(i.length), i);
-  }
-  console.log(resultMap);
-
-  // 문자열 갯수카운팅 제일 높을 것부터 순서대로 숫자보여주기
-  let number = resultMap.keys();
-  let sorted = [];
-  for(let sort of number) {
-    sorted.push(sort);
-  }
-  sorted.sort((a,b) => {
-    return b - a;
-  });
-
-  // 가장 긴문자열무터 2개 합치기
   let result = '';
-  let maxCount = resultMap.size;
-  for(let i = 0; maxCount < k ? i < maxCount : i < k; i++) {
-    result += resultMap.get(sorted[i]);
+  if(strarr.length > k) {
+    strarr.sort((a, b) => {
+      return b.length - a.length;
+    });
+
+    console.log()
+
+    for(let i = 0; i < k; i++) {
+
+      if(strarr[i] !== undefined) {
+        result += strarr[i];
+      }
+    }
+  } else {
+    for(let i in strarr) {
+      result += strarr[i];
+    }
   }
-
   console.log(result);
-  // 정답 제출
   return result;
+};
+
+
+const assert = require('assert');
+
+function testing(actual, expected) {
+  assertEquals(actual, expected)
 }
-
-
-// longestConsec(["zone","zone","zone","zone", "abigail", "theta", "form", "libe", "zas"], 2);
-// longestConsec(["wlwsasphmxx","owiaxujylentrklctozmymu","wpgozvxxiu"], 2);
-longestConsec(["itvayloxrp","wkppqsztdkmvcuwvereiupccauycnjutlv","vweqilsfytihvrzlaodfixoyxvyuyvgpck"], 2);
+describe("longestConsec",function() {
+  it("Basic tests",function() {
+    testing(longestConsec(["zone", "abigail", "theta", "form", "libe", "zas"], 2), "abigailtheta")
+    testing(longestConsec(["ejjjjmmtthh", "zxxuueeg", "aanlljrrrxx", "dqqqaaabbb", "oocccffuucccjjjkkkjyyyeehh"], 1), "oocccffuucccjjjkkkjyyyeehh")
+    testing(longestConsec([], 3), "")
+    testing(longestConsec(["itvayloxrp","wkppqsztdkmvcuwvereiupccauycnjutlv","vweqilsfytihvrzlaodfixoyxvyuyvgpck"], 2), "wkppqsztdkmvcuwvereiupccauycnjutlvvweqilsfytihvrzlaodfixoyxvyuyvgpck")
+    testing(longestConsec(["wlwsasphmxx","owiaxujylentrklctozmymu","wpgozvxxiu"], 2), "wlwsasphmxxowiaxujylentrklctozmymu")
+    testing(longestConsec(["zone", "abigail", "theta", "form", "libe", "zas"], -2), "")
+    testing(longestConsec(["it","wkppv","ixoyx", "3452", "zzzzzzzzzzzz"], 3), "ixoyx3452zzzzzzzzzzzz")
+    testing(longestConsec(["it","wkppv","ixoyx", "3452", "zzzzzzzzzzzz"], 15), "")
+    testing(longestConsec(["it","wkppv","ixoyx", "3452", "zzzzzzzzzzzz"], 0), "")
+  })});
