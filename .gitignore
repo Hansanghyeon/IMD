@@ -1,5 +1,8 @@
 .idea/
 .DS_Store/
+<<<<<<< HEAD
 
+=======
+>>>>>>> codewars
 node_modules/
 package-lock.json
