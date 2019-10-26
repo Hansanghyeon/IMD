@@ -13,10 +13,13 @@
  ** 이 문제를 포기하였습니다. 3일동안 문제를 푸는 것은
  ** 내식력이 모자란 것같습니다.
  ** 정답을가지고 해석하는 것이 좋을 것같다고 판단.
+ *
+ ** 20191026 답을보고 문제를 이해함
+ ** 문제는 연속된 배열의 문자열들의 합을가지고 가장 긴 문제열을 도출..
  */
 
 
-function longestConsec(strarr, k) {
+function drop_longestConsec(strarr, k) {
   let n = strarr.length;
 
   let result = "";
@@ -79,6 +82,26 @@ function longestConsec(strarr, k) {
   }else {
     return result;
   }
+}
+
+
+/*
+정답 리버스엔지니어링
+ */
+function longestConsec(strarr, k) {
+  var longest = "";
+  for(var i=0;k>0 && i<=strarr.length-k;i++){
+    console.log('조건: ',i,i+k);
+    console.log(strarr.slice(i,i+k));
+    var tempArray = strarr.slice(i,i+k);
+    var tempStr = tempArray.join("");
+    if(tempStr.length > longest.length){
+      longest = tempStr;
+    }
+  }
+
+  console.log(`\n${longest}\n`);
+  return longest;
 }
 
 const chai = require('chai');
