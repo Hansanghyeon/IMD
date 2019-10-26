@@ -8,6 +8,11 @@
  * TODO: 20191025
  * 문자열의 길이가 동일한 배열의 요소들이 나열되어있을때
  * 입력받은 k만큼 뒤에서 k번째까지 리턴해줘야한다.
+ *
+ ** 20191026
+ ** 이 문제를 포기하였습니다. 3일동안 문제를 푸는 것은
+ ** 내식력이 모자란 것같습니다.
+ ** 정답을가지고 해석하는 것이 좋을 것같다고 판단.
  */
 
 
@@ -16,7 +21,6 @@ function longestConsec(strarr, k) {
 
   let result = "";
   if(!(n === 0 || k > n || k <= 0)) {
-    console.log('===== start =====');
     // 중복제거
     let rSet = new Set;
     for(let item of strarr) {
@@ -27,10 +31,17 @@ function longestConsec(strarr, k) {
     let oMap = new Map;
     for(let item of rSet) {
       rMap.set(item, item.length);
-      oMap.set(item.length, item);
+      if(oMap.has(item.length)) {
+        let old = oMap.get(item.length);
+        old.push(item);
+        oMap.set(item.length, old);
+      } else
+        oMap.set(item.length, [item]);
     }
     let entries = rMap.entries();
+    // 입력받은 문제의 배열을 가지고있고 글자의 카운팅도 가지고있는 배열
     let rSort = [];
+    // 문자와 카운팅도가지고있지만 카운팅의 숫자의 순서대로 정리한 배열
     let order = [];
     for(let item of entries) {
       rSort.push(item);
@@ -43,16 +54,27 @@ function longestConsec(strarr, k) {
     console.log('\norder\n---\n', order);
     console.log('\nSort\n---\n',rSort);
     console.log('\nresource\n---');
+    let count = k;
+
+    let test = [...oMap.entries()].sort((a, b) => {
+      return b[0] - a[0];
+    });
+    console.log(test);
     for(let i = 0; i < rSet.size; i++) {
       for(let z = 0; z < k; z++) {
-        if(order[z][0] === rSort[i][0]) {
-          result += oMap.get(rSort[i][1]);
-          console.log(rSort[i][1])
+        if(order[z][0] === rSort[i][0] && count >= 0) {
+          console.log('oMap:', oMap);
+          let isMap = oMap.get(rSort[i][1]).length;
+          console.log(count);
+          if(isMap > 1 && isMap >= count ) {
+            continue;
+          }
+          result += rSort[i][0];
+          count--;
         }
       }
     }
     console.log('\nresult\n---\n',result);
-    console.log('\n===== end =====\n');
     return result;
   }else {
     return result;
