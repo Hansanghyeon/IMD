@@ -15,48 +15,49 @@
  */
 
 function tickets(peopleInLine){
-  // 결과
-  let result = '';
-  // 지폐구분
+  console.log('peopleInLine: ',peopleInLine);
   let momney = {
     '25' : 0,
     '50' : 0,
     '100' : 0
   };
-  // 비용
-  const cost = 25;
+  let result = 'NO';
   for(let pay of peopleInLine) {
-    // 잔돈반환기준
-    if(pay > 25) {
-      let a = pay - cost;
-      // 가지고있는 큰지폐부터 반환
-      if(pay >= 100) {
-        momney['100'] = hundred(a, momney['100']);
-        result = hundred(a, momney['100']).result === undefined ? '' : "NO";
-
-      }
-      if(pay < 100 && pay >= 50) {
-
-      }
-    } else if(pay === 25) {
-      momney["25"]++
-    } else {
-      // 오류 구분
-      result = "NO";
+    switch (pay) {
+      case 25 :
+        momney["25"]++;
+        result = 'YES';
+        break;
+      case 50 :
+        if(momney["25"]*25 >= 25) {
+          momney["25"]--;
+          momney["50"]++;
+          result = 'YES';
+        } else
+          result = 'NO';
+        break;
+      case 100 :
+        if(momney["25"] !== 0&&(momney["25"] * 25) + (momney["50"] * 50) >= 75) {
+          momney["100"]++;
+          if(momney["50"] === 0) {
+            momney["25"] -= 3;
+          } else {
+            momney["25"]--;
+            momney["50"]--;
+          }
+          result = 'YES';
+        } else
+          result = "NO";
+        break;
+      default:
+        break;
+    }
+    console.log(pay,momney);
+    if(result === "NO") {
+      break;
     }
   }
-
   return result;
-}
-function hundred(pay, momeny) {
-  let count = Number((pay / 100).toFixed(0));
-  let bill = momeny - count;
-  let hay = Number(pay) - (count * 100);
-  if(bill < 0) {
-    return {result : "NO"};
-  } else {
-    return {hay, bill}
-  }
 }
 
 // ----- Answer -----
@@ -65,5 +66,11 @@ const chai = require('chai');
 const assert = chai.assert;
 const assertEquals = assert.strictEqual;
 
-// assertEquals(tickets([25, 25, 50, 50]), "YES");
-assertEquals(tickets([25, 100]), "NO");
+// assertEquals(tickets([25,25,25,100,25,25,25,100,25,50,25,100]), "YES");
+
+// ** 테스트 실패케이스? 와이?
+// ** 로그가 먼저나오고 케이스가나와서 헷갈림
+assertEquals(tickets([ 25, 25, 25, 100, 25, 25, 50, 100, 25, 25, 25, 100, 25, 25, 50, 100, 25, 25, 50, 100, 25, 50, 50, 25 ]), "NO");
+// assertEquals(tickets([ 25, 50, 25, 100, 25, 50, 25, 100, 25, 50, 25, 100, 25, 25, 50, 100, 25, 25, 50, 100 ]), "NO");
+// assertEquals(tickets([ 25, 50, 25, 100, 25, 50, 25, 100, 25, 25, 50, 100, 25, 25, 50, 100, 25, 25, 25, 100 ]), "NO");
+// assertEquals(tickets([ 25, 25, 25, 100, 25, 25, 50, 100, 25, 25, 25, 100, 25, 25, 50, 100 ]), "NO");
