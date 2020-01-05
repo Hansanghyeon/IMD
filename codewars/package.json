@@ -1,5 +1,5 @@
 {
-  "name": "imd",
+  "name": "hackrank",
   "version": "1.0.0",
   "description": "앞으로 더 재미난 프로젝트를 원활히하고싶어 나는 지금 공부한다!",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hansanghyeon/IMD.git"
+    "url": "git+https://github.com/Hansanghyeon/study.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Hansanghyeon/IMD/issues"
+    "url": "https://github.com/Hansanghyeon/study/issues"
   },
-  "homepage": "https://github.com/Hansanghyeon/IMD#readme",
+  "homepage": "https://github.com/Hansanghyeon/study#readme",
   "dependencies": {
     "chai": "*",
     "mocha": "*"
