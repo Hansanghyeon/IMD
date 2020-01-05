@@ -72,3 +72,92 @@ let a;
 ```
 
 *Temporal dead zone* 에 대한 자세한 내용은 [Mozilla 개발자 네트워크](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#Temporal_dead_zone_and_%EC%98%A4%EB%A5%98s_with_let)의 관련 내용을 참조하십시오.
+
+## 블럭-스코프 변수 캡쳐
+
+`var` 선언으로 변수 캡쳐를 처음 접했을때 우리는 일단 캡쳐된 변수가 어떻게 작동하는지 간략하게 살펴보았습니다.<br/>
+이것에 대한 직감적이고 더 나은 직감을 주기 위해 스코프가 실행될 때마다 변수의 "환경"을 생성합니다<br/>
+해당 환경 및 챕쳐된 변수는 스코프 내의 모든 항목이 완료된 후에도 존재할 수 있습니다.
+
+```ts
+function theCityThatAlwaysSleeps() {
+  let getCity;
+
+  if(true) {
+    let city = "Seattle";
+    getCity = function() {
+      return city
+    }
+  }
+
+  return getCity();
+}
+```
+
+환경내에서 `city` 를 캡쳐했으므로 if 블록이 실행을 완료 했음에도 불구하고 여전히 접근할 수 있습니다.
+
+이전의 `setTimeout` 예제에서 `for` 문을 반복할 때마다 변수의 상태를 캡쳐하기 위해 IIFE를 사용해야 한다는 결론을 얻었습니다.<br/>
+실제로 하고 있던 것은 캡쳐한 변수를 위한 새로운 변수 환경을 만드는 것이었습니다.<br/>
+그것은 약간의 고통이었지만 다행스럽게도 TypeScript에서 그렇게 할 필요가 없습니다.
+
+`let` 은 루프의 일부로 선언될 때 크게 다른 동작을 합니다.<br/>
+루프 자체에 새로운 환경을 도입하기보다는 이러한 선언은 반복마다 새로운 스코프를 만듭니다.<br/>
+이것이 IIFE로 하고 있던 것을 `let` 을 사용하여 이전의 `setTimeout` 예제를 바꿀 수 있습니다.
+
+```ts
+for(let i = 0; i < 10; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 100 * i);
+}
+```
+
+예상한대로 출력됩니다.
+
+```bash
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+```
+
+## const 선언
+
+`const` 는 변수를 선언하는 또 다른 방법입니다.
+
+```ts
+const numLivesForCat = 9;
+```
+
+그것은 `let` 선언과 같지만 그 이름에서 알 수 있듯이 바인딩 된 후에는 값을 변경할 수 없습니다.<br/>
+즉 `let`과 동일한 스코프 규칙을 가지고 있지만 규칙을 다시 할당할 수 없습니다.
+
+이것은 참조하는 값이 불변이라는 개념과 혼동되어서는 안됩니다.
+
+```ts
+const numLivesForCat = 9;
+const kitty = {
+  name: "Aurora",
+  numLives: numLivesForCat,
+}
+
+// Error
+kitty = {
+  name: "Danielle",
+  numLives: numLivesForCat
+}
+
+// All 👍
+kitty.name = "Rory";
+kitty.name = "Kitty";
+kitty.name = "Cat";
+kitty.numLives--;
+```
+
+이를 방지하기 위해 구체적인 조치를 취하지 않는 한 `const` 변수의 내부 상태는 여전히 수정할 수 있습니다. 다행히 TypeScript를 사용하면 객체의 멤버를 `readonly` 로 지정할 수 있습니다.
