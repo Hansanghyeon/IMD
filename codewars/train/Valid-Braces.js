@@ -1,5 +1,4 @@
 function validBraces(braces){
-  //TODO
   let temp = braces;
   console.log('temp.indexOf("()")',temp.indexOf('()'));
   console.log("temp.indexOf('[]')", temp.indexOf('[]'));
