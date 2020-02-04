@@ -1,13 +1,23 @@
 import React, { Component } from 'react';
 
 export default class AddNumber extends Component {
+  state = { size: 1 }
+
+  ChangeHandler = (e) => {
+    this.setState({
+      size: Number(e.target.value)
+    })
+  }
+  PushClick = () => {
+    this.props.onClick(this.state.size);
+  }
   render() {
     return (
       <div>
         <h1>Add Number</h1>
-        <input type="button" value="+" />
-        <input type="text" value="0" />
+        <input type="button" value="+" onClick={this.PushClick} />
+        <input type="text" value={this.state.size} onChange={this.ChangeHandler} />
       </div>
     )
   }
-}
+};
