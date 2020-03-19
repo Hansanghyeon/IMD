@@ -269,3 +269,83 @@ projectRoot
   5. 두번째 대체 'generated/*' -> generated/folder2/file3
   6. 이에 따른 대체 결과는 비-상대적인 이름입니다 - baseUrl 와 결합하세요 -> projectRoot/generated/folder2/file3.ts.
   7. 좋아요. 파일이 존재합니다. 
+
+### `rootDirs` 디렉토리
+
+컴파일 시 여러 디렉토리의 프로젝트 소스가 모두 결합되어 단일 출력 디렉토리를 생성하는 경우가 있습니다.<br/>
+이것은 소스 디렉토리가 "가상" 디렉토리를 만드는 것으로 볼 수 있습니다.
+
+`rootDirs`를 사용하면 "가상" 디렉토리를 구성하는 roots를 컴파일러에 알릴 수 있습니다.<br/>
+따라서 컴파일러는 이러한 "가상" 디렉토리내의 상대 모듈 imports를 하나의 디렉토리에 병합된 것처럼 해석할 수 있습니다.
+
+예를 들어 다음 프로젝트 구조를 고려해보세요.
+
+```bash
+src
+ └── views
+     └── view1.ts (imports './template1')
+     └── view2.ts
+
+ generated
+ └── templates
+         └── views
+             └── template1.ts (imports './view2')
+```
+
+`src/views`의 파일을 일부 UI 컨트롤의 사용자 코드입니다.<br/>
+`gnenrated/tamplates` 파일은 빌드의 일부로 템플릿 생성기에 의해 자동으로 생성된 UI 템플릿 바인딩 코드입니다.<br/>
+빌드 단계는 `/src/views`및 `/enerated/templates/views`에 있는 파일을 출력의 동일한 디렉토리에 복사합니다.<br/>
+런타임에 뷰는 템플릿이 그 옆에 존재하기를 기대할 수 있으므로 상대적 이름을 `"./template"`로 사용하여 import합니다.
+
+이 관계를 컴파일러에 지정하려면 `"rootDirs"`를 사용하세요<br/>
+`"rootDirs"`은 내용이 런타임에 병합될 것으로 예상되는 roots 목록을 지정합니다.<br/>
+따라서 우리의 예에 따라, `tsconfig.json` 파일을 다음과 같이 보여야합니다.
+
+```json
+{
+  "complierOptions": {
+    "rootDirs": [
+      "src/views",
+      "generated/templates/views"
+    ]
+  }
+}
+```
+
+컴파일러가 `rootDirs`의 하위 폴더에 있는 상대적 모듈 가져오기를 볼 때마다 `rootDirs`의 각 항목에서 import를 검색합니다.
+
+`rootDirs`의 유연성은 논리적으로 병합된 물리적 소스 디렉토리 목록 지정에 한정되는 것은 아닙니다<br/>
+제공된 배열은 존재 여부에 관계 없이 원하는 수의 임의 디렉토리 이름을 포함할 수 있습니다.<br/>
+이를 통해 컴파일러는 조건부 포함 및 프로젝트 별 로더 플러그인과 같은 정교한 번들 런타임 기능을 타입 세이프 방식으로 캡처할 수 있습니다.
+
+빌드 도구가 `./#{locale}/messages`와 같은 상대 모듈 경로의 일부로써 특별한 경로 토큰 `#{locale}`을 삽입하여 지역 특정 번들을 자동으로 생성하는 국제화 시나리오를 생각해보세요.
+
+이 가상 설정에서 도구는 지원되는 로케일을 열거하고 추상화된 경로를 `./zh/messages`, `./de/messages`등으로 매핑합니다.
+
+이러한 각 모듈이 일련의 문자열을 내보낸다고 가정합니다.<br/>
+예를 들어 `./zh/messages`에는 다음이 포함될 수 있습니다.
+
+```ts
+export default [
+    "您好吗",
+    "很高兴认识你"
+];
+```
+
+`rootDirs`를 활용하여 디렉토리가 존재하지 않더라도 이 매핑의 컴파일러에 이를 알려 줌으로써 `./#{locale}/messages`를 안전하게 해결 할 수 있습니다.
+
+예를 들어, 다음과 같은 `tsconfig.json`을 함께 사용합니다.
+
+```json
+{
+  "compilerOptions": {
+    "rootDirs": [
+      "src/zh",
+      "src/de",
+      "src/#{locale}"
+    ]
+  }
+}
+```
+
+이제 컴파일러는 `import messages from './#{locale#}/messages'`에서 `import messages from './zh/messages'`의 메시지를 가져와서 시간 지원 계획을 해치지 않고 지역에 상관없이 개발할 수 있습니다.
