@@ -404,3 +404,42 @@ File 'node_modules/typescript/lib/typescript.d.ts' exist - use it as a module re
   > 'package.json'에는 'node_modules/typescript/lib/typescript.d.ts'를 참조하는 'types' 필드인 './lib/typescript.d.ts'가 있습니다.
 - 최종 결과
   > ======== 모듈 이름 'typescript'는 'node_modules/typescript/lib/typescript.d.ts'에서 성공적으로 해석되었습니다. ========
+
+## `--noResolve` 사용하기
+
+일반적으로 컴파일러는 컴파일 프로세스를 시작하기 전에 모든 모듈 imports를 해석하려고 시도합니다.<br/>
+파일에 `import`를 성공적으로 해석할 때마다 컴파일러는 파일을 나중에 처리할 파일 집합에 추가합니다.
+
+`--noResolve` 컴파일러 옵션은 컴파일러가 커맨드라인에서 전달되지 않은 파일을 컴파일에 "추가"하지 않도록 지시합니다.<br/>
+모듈을 파일로 해석하려고 하지만 파일이 지정되지 않으면 포함되지 않습니다.
+
+**app.ts**
+
+```ts
+import * as A from 'moduleA'; // 'moduleA'가 커맨드라인에서 전달되었습니다.
+import * as B from 'moduleB'; // TS2307 오류: 'moduleB' 모듈을 찾을 수 없습니다
+```
+
+```bash
+tsc app.ts moduleA.ts --noResolve
+```
+
+`--noResolve`를 사용하여 `app.ts`를 컴파일하면 다음과 같은 결과가 발생합니다
+
+- 커맨드라인에서 전달된대로 `moduleA`를 적절하게 찾습니다.
+- 전달되지 않았기 때문에 `moduleB`를 찾지 못하는 오류
+
+### 공통 질문
+
+#### 제외 목록에 있는 모듈을 여전히 컴파일러가 선택하는 이유는 무엇입니까?
+
+`tsconfig.json`은 폴더를 "프로젝트"로 만듭니다.<br/>
+`"exclude"`또는 `"files"` 항목을 지정하지 않으면 `tsconfig.json`을 포함한 모든 파일과 해당 하위 디렉토리가 컴파일에 포함됩니다.<br/>
+일부 파일을 제외하려면 `"exclude"`를 사용하세요<br/>
+만일 모든 파일을 지정하고 싶다면 컴파일러가 찾아보게 하는 대신 `"files"`를 사용하세요
+
+`tsconfig.json`은 자동 포함입니다.<br/>
+위에서 설명한 모듈 해석을 포함하지 않습니다.<br/>
+컴파일러가 파을을 모듈 import의 대상으로 식별하는 경우 이전 단계에서 제외되었는지 여부에 관계없이 컴파일에 포함됩니다.
+
+따라서 컴파일에서 파일을 제외하려면 `import`또는 `/// <reference path='...' />` 지시자가 있는 모든 파일을 제외해야 합니다.
