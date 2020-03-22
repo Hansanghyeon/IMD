@@ -349,3 +349,58 @@ export default [
 ```
 
 이제 컴파일러는 `import messages from './#{locale#}/messages'`에서 `import messages from './zh/messages'`의 메시지를 가져와서 시간 지원 계획을 해치지 않고 지역에 상관없이 개발할 수 있습니다.
+
+## 모듈 해석 추적
+
+앞에서 설명한 것처럼 컴파일러가 모듈을 해석할 때 현재 폴더 외부의 파일들에 방문할 수 있습니다.<br/>
+모듈이 해석되지 않은 이유를 진단하거나 잘못된 정의로 해석된 경우에는 문제 해석이 어려울 수 있습니다<br/>
+`--traceResolution`을 사용하여 컴파일러 모듈 해석 추적을 활성화하면 모듈 확인 프로세스 중에 발생한 일에 대한 통찰력을 얻을 수 있습니다.
+
+`typescript` 모듈을 사용하는 샘플 애플리케이션이 있다고 가정해 봅시다.<br/>
+`app.ts`는 `import * as ts from 'typescript'`와 같은 import를 가지고 있습니다.
+
+```
+│   tsconfig.json
+├───node_modules
+│   └───typescript
+│       └───lib
+│               typescript.d.ts
+└───src
+        app.ts
+```
+
+`--traceResolution`을 사용하여 컴파일러 호출하기
+
+```bash
+tsc --traceResolution
+```
+
+결과는 다음과 같습니다.
+
+```
+======== Resolving module 'typescript' from 'src/app.ts'. ========
+Module resolution kind is not specified, using 'NodeJs'.
+Loading module 'typescript' from 'node_modules' folder.
+File 'src/node_modules/typescript.ts' does not exist.
+File 'src/node_modules/typescript.tsx' does not exist.
+File 'src/node_modules/typescript.d.ts' does not exist.
+File 'src/node_modules/typescript/package.json' does not exist.
+File 'node_modules/typescript.ts' does not exist.
+File 'node_modules/typescript.tsx' does not exist.
+File 'node_modules/typescript.d.ts' does not exist.
+Found 'package.json' at 'node_modules/typescript/package.json'.
+'package.json' has 'types' field './lib/typescript.d.ts' that references 'node_modules/typescript/lib/typescript.d.ts'.
+File 'node_modules/typescript/lib/typescript.d.ts' exist - use it as a module resolution result.
+======== Module name 'typescript' was successfully resolved to 'node_modules/typescript/lib/typescript.d.ts'. ========
+```
+
+**주의 사항**
+
+- import의 이름과 위치
+  > ======== 모듈 해석 'typescript' from 'src/app.ts'. ========
+- 컴파일러가 따르는 방법
+  > 'NodeJs' 를 사용하여 모듈 해석 종류가 지정되지 않았습니다.
+- npm 패키지에서 타입 로드
+  > 'package.json'에는 'node_modules/typescript/lib/typescript.d.ts'를 참조하는 'types' 필드인 './lib/typescript.d.ts'가 있습니다.
+- 최종 결과
+  > ======== 모듈 이름 'typescript'는 'node_modules/typescript/lib/typescript.d.ts'에서 성공적으로 해석되었습니다. ========
