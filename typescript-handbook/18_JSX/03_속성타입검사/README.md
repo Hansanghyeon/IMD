@@ -70,3 +70,75 @@ var props = { requiredProp: 'bar'};
 var badProps = {};
 <foo {...badProps} />;  // ❌
 ```
+
+## 하위 타입 검사
+
+2.3 버전에서 하위 타입 검사를 도입했습니다.<br/>
+하위(children)는 요소 타입 검사에서 결정된 요소 속성 타입의 프로퍼티 입니다.<br/>
+`JSX.ElementAttributesProperty`를 사용하여 props 이름을 결정하는 것과 마찬가지로 `JSX.ElementChildrenAttribute`를 사용하여 하위 이름을 결정합니다.<br/>
+`JSX.ElementChildrenAttribute`는 단일 프로퍼티로 선언해야 합니다.
+
+```ts
+declare namespace JSX {
+  interface ElementChildrenAttribute {
+    children: {};  // 사용할 하위 이름을 지정하세요
+  }
+}
+```
+
+하위 타입을 명시적으로 지정하지 않는다면 React typings의 기본 타입을 사용합니다.
+
+```tsx
+<div>
+  <h1>Hello</h1>
+</div>
+
+<div>
+  <h1>Hello</h1>
+  World
+</div>
+
+const CustomComp = (props) => <div>props.children</div>
+
+<CustomComp>
+  <div>Hello world</div>
+  {'This is just a JS expression...' + 1000}
+</CustomComp>
+```
+
+다른 속성과 마찬가지로 하위 타입을 지정할 수 있습니다<br/>
+이렇게 하면 React typings에서 기본 타입을 덮어쓰게 됩니다.
+
+```tsx
+interface PropsType {
+  children: JSX.Element
+  name: string
+}
+
+class Component extends React.Component<PropsType, {}> {
+  render() {
+    return (
+      <h2>
+        this.props.children
+      </h2>
+    )
+  }
+}
+
+// 좋아요
+<Component>
+  <h1>Hello World</h1>
+</Component>
+
+// ❌, 하위 타입은 JSX.Element의 배열이 아닌 JSX.ELement 타입입니다.
+<Component>
+  <h1>Hello World</h1>
+  <h2>Hello World</h2>
+</Component>
+
+// ❌, 하위 타입은 JSX.Element 또는 string의 배열이 아닌 JSX.Element 타입입니다.
+<Component>
+  <h1>Hello</h1>
+  World
+</Component>
+```
