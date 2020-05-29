@@ -2,9 +2,20 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 )
 
+func add(x, y float64) float64 {
+	return x + y
+}
+
+func multiple(a, b string) (string, string) {
+	return a, b
+}
+
 func main() {
-	fmt.Println("A number form 1-100", rand.Intn(100))
+	// num1, num2 := 5.6, 9.5
+	w1, w2 := "Hey", "there"
+
+	fmt.Println(multiple(w1, w2))
+	// fmt.Println(add(num1, num2))
 }
