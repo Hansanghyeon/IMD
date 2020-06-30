@@ -1,7 +1,3 @@
-function stringSum(letter) {
-  const numberString = ['a', 'b', 'c', 'd', 'e', 'f', ]
-}
-
 function high(x){
   const splitString = x.split(' ');
   const scoring = splitString.map(e => {
