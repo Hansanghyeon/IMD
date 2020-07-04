@@ -42,7 +42,7 @@ var weight = 9;
 function findSumBetter(arr, weight) {
   var hashtable = {};
 
-  for (var i = 0; arrLength = arr.length; i < arrLength; i++) {
+  for (var i = 0, arrLength = arr.length; i < arrLength; i++) {
     var currentElement = arr[i],
       difference = weight - currentElement;
     
