@@ -1,0 +1,1 @@
+middleNumbers.reduce((acc, cur) => acc + cur) / 2
