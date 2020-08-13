@@ -2,6 +2,36 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
+const api3 = async (url, timeout = 5000, info = {}) => {
+  let id = -1;
+  const v = await Promise.race([
+    new Promise((res) => (id = window.setTimeout(() => res(), timeout))),
+    fetch(new Request(url, info)),
+  ]);
+  if (v instanceof Response) {
+    clearTimeout(id);
+    if (v.status === 404) throw new Error("404");
+    return await v.json();
+  } else throw new Error("timeout");
+};
+const infinity = async function* (cat) {
+  let page = -1;
+  do {
+    try {
+      const { nextPage, items } = await api3("url");
+      page = nextPage;
+      yield items;
+    } catch (error) {
+      return;
+    }
+  } while (page !== -1);
+};
+const notice2 = infinity("notice");
+(async () => {
+  const { value, done } = notice2.next();
+  if (!done) console.log(value);
+})();
+
 const api2 = async (url, timeout = 50000, info = {}) => {
   let id = -1;
   const v = await Promise.race([
