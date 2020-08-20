@@ -21,13 +21,36 @@ window.addEventListener("resize", function () {
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 // create the shape
-var geometry = new THREE.BoxGeometry(1, 1, 1);
+var geometry = new THREE.BoxGeometry(2, 2, 2);
+var cubeMaterials = [
+  new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load("./img/1.jpg"),
+    side: THREE.DoubleSide,
+  }), // RIGHT SIDE
+  new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load("./img/2.jpg"),
+    side: THREE.DoubleSide,
+  }), // LEFT SIDE
+  new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load("./img/3.jpg"),
+    side: THREE.DoubleSide,
+  }), // TOP SIDE
+  new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load("./img/4.jpg"),
+    side: THREE.DoubleSide,
+  }), // BOTTOM SIDE
+  new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load("./img/5.jpg"),
+    side: THREE.DoubleSide,
+  }), // FRONT SIDE
+  new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load("./img/6.jpg"),
+    side: THREE.DoubleSide,
+  }), // BACK SIDE
+];
 
 // create a material, colour or image texture
-var material = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  wireframe: true,
-});
+var material = new THREE.MeshFaceMaterial(cubeMaterials);
 var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 camera.position.z = 3;
