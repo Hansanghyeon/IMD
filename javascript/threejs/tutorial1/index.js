@@ -18,6 +18,8 @@ window.addEventListener("resize", function () {
   camera.updateProjectionMatrix();
 });
 
+controls = new THREE.OrbitControls(camera, renderer.domElement);
+
 // create the shape
 var geometry = new THREE.BoxGeometry(1, 1, 1);
 
@@ -32,8 +34,8 @@ camera.position.z = 3;
 
 // game logic
 var update = function () {
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.005;
+  //cube.rotation.x += 0.01;
+  //cube.rotation.y += 0.005;
 };
 
 // draw Scene
