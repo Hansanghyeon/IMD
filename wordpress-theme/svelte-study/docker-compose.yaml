@@ -1,19 +1,20 @@
-version: "3.8"
+version: "3.1"
 
 services:
   wordpress:
     image: wordpress
     restart: always
     ports:
-      - 40002:80
+      - 40001:80
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wp
       WORDPRESS_DB_PASSWORD: wp
       WORDPRESS_DB_NAME: wp
     volumes:
-      - wordpress:/var/www/html
-      - .:/var/www/html/wp-content/plugins/study
+      - ./.wordpress:/var/www/html
+      - ./plugins:/var/www/html/wp-content/plugins
+      - ./svelte:/var/www/html/wp-content/themes/svelte
     networks:
       - backend
 
@@ -31,19 +32,9 @@ services:
       - maria:/var/lib/mysql
     networks:
       - backend
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    links:
-      - db
-    ports:
-      - 40003:80
-    networks:
-      - backend
 
 networks:
   backend:
     driver: bridge
 volumes:
   maria:
-  wordpress:
