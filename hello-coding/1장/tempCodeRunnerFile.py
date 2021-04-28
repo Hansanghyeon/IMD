@@ -1,0 +1,1 @@
+binary_search(my_list, 3)
